@@ -8,13 +8,6 @@ namespace Revlos
     {
         static void Main(string[] args)
         {
-            /*
-             * 1 Read table as series of object
-             * 2 Read cells horizontally, vertically and 3x3 grid
-             * 3 Algo to loop over cells in all 3 directions
-             *
-             * */
-
             var row1 = "---72---3";
             var row2 = "7-5-6---2";
             var row3 = "---8-1-9-";

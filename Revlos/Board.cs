@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace Revlos
 {
@@ -32,6 +30,7 @@ namespace Revlos
                     {
                         board[i,j] = new BoardSquare((int)char.GetNumericValue(row[j]));
                     }
+                    board[i,j].SetLocation(i, j);
                 }
             }
             return board;
@@ -90,61 +89,28 @@ namespace Revlos
             }
             return result;
         }
-
-        public SubBoard GetSubBoard(int x, int y)
+        
+        public BoardSquare[] GetSubBoard(SubBoard subBoard)
         {
-            if (x < 0 || x > 8 || y < 0 || y > 8)
-                throw new ArgumentOutOfRangeException();
-
-            if (x < 3 && y < 3)
-                return SubBoard.TopLeft;
-
-            if (x > 2 && x < 6 && y < 3)
-                return SubBoard.TopMiddle;
-
-            if (x > 5 && y < 3)
-                return SubBoard.TopRight;
-
-            if (x < 3 && y > 2 && y < 6)
-                return SubBoard.MiddleLeft;
-
-            if (x > 2 && x < 6 && y > 2 && y < 6)
-                return SubBoard.Middle;
-
-            if (x > 5 && y > 2 && y < 6)
-                return SubBoard.MiddleRight;
-
-            if (x < 3 && y > 5)
-                return SubBoard.BottomLeft;
-
-            if (x > 2 && x < 6 && y > 5)
-                return SubBoard.BottomMiddle;
-
-            return SubBoard.BottomRight;
+            var counter = 0;
+            BoardSquare[] subBoardSquares = new BoardSquare[9];
+            for (var i = 0; i < _board.GetLength(0);i++)
+            {
+                for (var j = 0; j < _board.GetLength(1); j++)
+                {
+                    if (_board[i, j].GetSubBoard() == subBoard)
+                    {
+                        subBoardSquares[counter] = _board[i, j];
+                        counter++;
+                    }
+                }
+            }
+            return subBoardSquares;
         }
-
+        
         public bool IsBoardSolved()
         {
             return _board.Cast<BoardSquare>().Any(cell => cell.IsSolved());
         }
-        
-        public bool IsPossible(BoardSquare square)
-        {
-            
-            return false;
-        }
-    }
-
-    public enum SubBoard
-    {
-        TopLeft,
-        TopMiddle,
-        TopRight,
-        MiddleLeft,
-        Middle,
-        MiddleRight,
-        BottomLeft,
-        BottomMiddle,
-        BottomRight
     }
 }

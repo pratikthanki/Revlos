@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Revlos
 {
@@ -16,6 +15,7 @@ namespace Revlos
         {
             _value = value;
         }
+        
         public BoardSquare()
         {
             _value = null;
@@ -67,6 +67,21 @@ namespace Revlos
         public int? GetValue()
         {
             return _value;
+        }
+
+        public int GetRowIndex()
+        {
+            return _row;
+        }
+
+        public int GetColumnIndex()
+        {
+            return _column;
+        }
+
+        public SubBoard GetSubBoard()
+        {
+            return _subBoard;
         }
         
         private static SubBoard GetSubBoard(int x, int y)
