@@ -1,0 +1,12 @@
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/bin/Debug/netcoreapp3.1/SudokuSolver.deps.json
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/bin/Debug/netcoreapp3.1/SudokuSolver.runtimeconfig.json
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/bin/Debug/netcoreapp3.1/SudokuSolver.runtimeconfig.dev.json
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/bin/Debug/netcoreapp3.1/SudokuSolver.dll
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/bin/Debug/netcoreapp3.1/SudokuSolver.pdb
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/obj/Debug/netcoreapp3.1/SudokuSolver.csprojAssemblyReference.cache
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/obj/Debug/netcoreapp3.1/SudokuSolver.AssemblyInfoInputs.cache
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/obj/Debug/netcoreapp3.1/SudokuSolver.AssemblyInfo.cs
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/obj/Debug/netcoreapp3.1/SudokuSolver.csproj.CoreCompileInputs.cache
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/obj/Debug/netcoreapp3.1/SudokuSolver.dll
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/obj/Debug/netcoreapp3.1/SudokuSolver.pdb
+/Users/PratikThanki/Projects/SudokuSolver/SudokuSolver/obj/Debug/netcoreapp3.1/SudokuSolver.genruntimeconfig.cache
