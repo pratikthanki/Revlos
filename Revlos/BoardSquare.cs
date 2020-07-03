@@ -6,8 +6,11 @@ namespace Revlos
 {
     public class BoardSquare
     {
-        private readonly HashSet<int> _possibleValues = new HashSet<int>();
-        private int? _value; 
+        private readonly HashSet<int> _possibleValues = new HashSet<int>(9);
+        private int? _value;
+        private int _column;
+        private int _row;
+        private SubBoard _subBoard;
 
         public BoardSquare(int? value)
         {
@@ -36,6 +39,13 @@ namespace Revlos
             }
         }
 
+        public void SetLocation(int row, int column)
+        {
+            _row = row;
+            _column = column;
+            _subBoard = GetSubBoard(column, row);
+        }
+
         public void AddPossibleValue(int value)
         {
             _possibleValues.Add(value);
@@ -58,7 +68,39 @@ namespace Revlos
         {
             return _value;
         }
+        
+        private static SubBoard GetSubBoard(int x, int y)
+        {
+            if (x < 0 || x > 8 || y < 0 || y > 8)
+                throw new ArgumentOutOfRangeException();
 
+            if (x < 3 && y < 3)
+                return SubBoard.TopLeft;
+
+            if (x > 2 && x < 6 && y < 3)
+                return SubBoard.TopMiddle;
+
+            if (x > 5 && y < 3)
+                return SubBoard.TopRight;
+
+            if (x < 3 && y > 2 && y < 6)
+                return SubBoard.MiddleLeft;
+
+            if (x > 2 && x < 6 && y > 2 && y < 6)
+                return SubBoard.Middle;
+
+            if (x > 5 && y > 2 && y < 6)
+                return SubBoard.MiddleRight;
+
+            if (x < 3 && y > 5)
+                return SubBoard.BottomLeft;
+
+            if (x > 2 && x < 6 && y > 5)
+                return SubBoard.BottomMiddle;
+
+            return SubBoard.BottomRight;
+        }
+        
         public override string ToString()
         {
             return _value == null ? " " : _value.ToString();
