@@ -1,9 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Revlos
 {
-    public class BoardSquare
+    public class BoardSquare : IEnumerable
     {
         private readonly HashSet<int> _possibleValues = new HashSet<int>(9);
         private int? _value;
@@ -119,6 +120,11 @@ namespace Revlos
         public override string ToString()
         {
             return _value == null ? " " : _value.ToString();
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            throw new NotImplementedException();
         }
     }
 }

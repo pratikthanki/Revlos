@@ -7,7 +7,7 @@ namespace Revlos
     public class Board
     {
         private BoardSquare[,] _board;
-        public const int Size = 9;
+        
         public Board(IReadOnlyList<string> rows)
         {
             _board = new BoardSquare[9, 9];
@@ -58,9 +58,9 @@ namespace Revlos
             }
         }
 
-        public BoardSquare[] GetRow(int row)
+        public List<BoardSquare> GetRow(int row)
         {
-            BoardSquare[] result = new BoardSquare[9];
+            var result = new List<BoardSquare>(9);
             for (var i = 0; i < _board.GetLength(0);i++)
             {
                 if (i != row)
@@ -68,15 +68,15 @@ namespace Revlos
 
                 for (var j = 0; j < _board.GetLength(1); j++)
                 {
-                    result[j] = _board[i,j];
+                    result.Add(_board[i,j]);
                 }
             }
             return result;
         }
         
-        public BoardSquare[] GetColumn(int column)
+        public List<BoardSquare> GetColumn(int column)
         {
-            BoardSquare[] result = new BoardSquare[9];
+            var result = new List<BoardSquare>(9);
             for (var i = 0; i < _board.GetLength(0);i++)
             {
                 for (var j = 0; j < _board.GetLength(1); j++)
@@ -84,24 +84,22 @@ namespace Revlos
                     if (j != column)
                         continue;
 
-                    result[i] = _board[i,j];
+                    result.Add(_board[i,j]);
                 }
             }
             return result;
         }
         
-        public BoardSquare[] GetSubBoard(SubBoard subBoard)
+        public List<BoardSquare> GetSubBoard(SubBoard subBoard)
         {
-            var counter = 0;
-            BoardSquare[] subBoardSquares = new BoardSquare[9];
+            var subBoardSquares = new List<BoardSquare>(9);
             for (var i = 0; i < _board.GetLength(0);i++)
             {
                 for (var j = 0; j < _board.GetLength(1); j++)
                 {
                     if (_board[i, j].GetSubBoard() == subBoard)
                     {
-                        subBoardSquares[counter] = _board[i, j];
-                        counter++;
+                        subBoardSquares.Add(_board[i, j]);
                     }
                 }
             }

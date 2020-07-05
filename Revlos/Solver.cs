@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace Revlos
 {
@@ -15,15 +13,11 @@ namespace Revlos
             _board = board;
         }
 
-        public Board BackTracker(Board board)
+        public Board DancingLink(Board board)
         {
             Board finalBoard = null;
-            return finalBoard;
-        }
 
-        public void CalculateHorizontalValues()
-        {
-            
+            return finalBoard;
         }
         
         public bool IsPossible(BoardSquare square, int value)
@@ -31,11 +25,15 @@ namespace Revlos
             var row = square.GetRowIndex();
             var column = square.GetColumnIndex();
             var subBoard = square.GetSubBoard();
-            
-            return _board.GetRow(row).Contains<>(value) || 
-                   _board.GetColumn(column).Contains<>(value) || 
-                   _board.GetSubBoard(subBoard).Contains<>(value);
+
+            return IsValueAvailable(_board.GetRow(row), value) ||
+                   IsValueAvailable(_board.GetColumn(column), value) ||
+                   IsValueAvailable(_board.GetSubBoard(subBoard), value);
+        }
+
+        private static bool IsValueAvailable(List<BoardSquare> squares, int value)
+        {
+            return squares == null || squares.Any(option => option.GetValue() != value);
         }
     }
 }
- 
