@@ -6,27 +6,22 @@ namespace Revlos
     public class BoardSquare
     {
         private readonly HashSet<int> _possibleValues = new HashSet<int>(9);
-        private int? _value;
+        private int _value;
         private int _column;
         private int _row;
         private SubBoard _subBoard;
 
-        public BoardSquare(int? value)
+        public BoardSquare(int value)
         {
             _value = value;
         }
         
-        public BoardSquare()
+        public bool IsEmpty()
         {
-            _value = null;
+            return _value != 0;
         }
 
-        public bool IsSolved()
-        {
-            return _value != null;
-        }
-
-        public void SetValue(int? value)
+        public void SetValue(int value)
         {
             if (_possibleValues.Count > 0)
             {
@@ -64,7 +59,7 @@ namespace Revlos
             return _possibleValues;
         }
 
-        public int? GetValue()
+        public int GetValue()
         {
             return _value;
         }
@@ -118,7 +113,7 @@ namespace Revlos
         
         public override string ToString()
         {
-            return _value == null ? " " : _value.ToString();
+            return _value == 0 ? " " : _value.ToString();
         }
     }
 }
