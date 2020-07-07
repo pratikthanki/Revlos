@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,18 +28,16 @@ namespace Revlos
                 var row = rows[i];
                 for (var j = 0; j < row.Length; j++)
                 {
-                    if (row[j] == '-')
-                    {
-                        board[i,j] = new BoardSquare();
-                    }
-                    else
-                    {
-                        board[i,j] = new BoardSquare((int)char.GetNumericValue(row[j]));
-                    }
+                    board[i,j] = row[j] == '-' ? new BoardSquare(0) : new BoardSquare((int)char.GetNumericValue(row[j]));
                     board[i,j].SetLocation(i, j);
                 }
             }
             return board;
+        }
+
+        public BoardSquare GetBoardSquare(int row, int column)
+        {
+            return _board[column, row];
         }
         
         public void PrintBoard()
@@ -115,7 +112,7 @@ namespace Revlos
         
         public bool IsBoardSolved()
         {
-            return _board.Cast<BoardSquare>().Any(cell => cell.IsSolved());
+            return _board.Cast<BoardSquare>().Any(cell => cell.IsEmpty());
         }
     }
 }
