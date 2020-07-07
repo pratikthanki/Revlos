@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,12 +7,18 @@ namespace Revlos
 {
     public class Board
     {
-        private BoardSquare[,] _board;
+        private readonly BoardSquare[,] _board;
+        private HashSet<BoardSquare> _solved;
+        private HashSet<BoardSquare> _unsolved;
+        private Stack<HashSet<BoardSquare>> _changed;
         
         public Board(IReadOnlyList<string> rows)
         {
-            _board = new BoardSquare[9, 9];
             _board = BuildBoard(rows);
+
+            _solved = new HashSet<BoardSquare>();
+            _unsolved = new HashSet<BoardSquare>();
+            _changed = new Stack<HashSet<BoardSquare>>();
         }
         
         private static BoardSquare[,] BuildBoard(IReadOnlyList<string> rows)
