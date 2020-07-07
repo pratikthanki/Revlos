@@ -13,8 +13,7 @@ namespace Revlos
         
         public Board(IReadOnlyList<string> rows)
         {
-            _board = BuildBoard(rows);
-
+            _board = BuildBoard(rows); 
             _solved = new HashSet<BoardSquare>();
             _unsolved = new HashSet<BoardSquare>();
             _changed = new Stack<HashSet<BoardSquare>>();
@@ -37,7 +36,7 @@ namespace Revlos
 
         public BoardSquare GetBoardSquare(int row, int column)
         {
-            return _board[column, row];
+            return _board[row, column];
         }
         
         public void PrintBoard()
@@ -110,9 +109,9 @@ namespace Revlos
             return subBoardSquares;
         }
         
-        public bool IsBoardSolved()
+        public int SquaresRemaining()
         {
-            return _board.Cast<BoardSquare>().Any(cell => cell.IsEmpty());
+            return _board.Cast<BoardSquare>().Count(square => square.IsEmpty());
         }
     }
 }

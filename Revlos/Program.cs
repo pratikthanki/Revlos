@@ -27,10 +27,7 @@ namespace Revlos
             });
             Debug.Assert(rows.Count == 9);
 
-            var board = new Board(rows);
-            board.PrintBoard();
-
-            var solver = new Solver(board);
+            var solver = new Solver(new Board(rows));
             solver.DancingLink();
         }
     }

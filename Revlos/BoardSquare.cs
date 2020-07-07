@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Revlos
 {
@@ -18,20 +19,20 @@ namespace Revlos
         
         public bool IsEmpty()
         {
-            return _value != 0;
+            return _value == 0;
         }
 
         public void SetValue(int value)
         {
-            if (_possibleValues.Count > 0)
-            {
+            if (_possibleValues.Count > 0) 
                 _possibleValues.Clear();
-                _value = value;
-            }
-            else
-            {
-                _value = value;
-            }
+
+            _value = value;
+        }
+
+        public void SetValue()
+        {
+            SetValue(_possibleValues.First());
         }
 
         public void SetLocation(int row, int column)
@@ -46,6 +47,12 @@ namespace Revlos
             _possibleValues.Add(value);
         }
 
+        public void AddPossibleValue(List<int> values)
+        {
+            foreach (var value in values)
+                AddPossibleValue(value);
+        }
+        
         public void RemovePossibleValue(int value)
         {
             if (_possibleValues.Count > 0)
