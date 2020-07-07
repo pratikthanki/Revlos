@@ -14,30 +14,49 @@ namespace Revlos
             _board = board;
         }
 
-        public Board DancingLink()
+        public void DancingLink()
         {
-            Board finalBoard = null;
+            _board.PrintBoard();
+            do
+            {
+                for (var Row = 0; Row < 9; Row++)
+                {
+                    for (var Column = 0; Column < 9; Column++)
+                    {
+                        var CurrentSquare = _board.GetBoardSquare(Row, Column);
+                        var IsEmpty = CurrentSquare.IsEmpty();
+
+                        if (IsEmpty)
+                            CurrentSquare.AddPossibleValue(CalculatePossibleValues(CurrentSquare));
+
+                        if (CurrentSquare.GetPossibleValues().Count == 1)
+                            CurrentSquare.SetValue();
+                    }
+                }
+
+                Console.WriteLine($"Squares remaining: {_board.SquaresRemaining()}");
+            } while (_board.SquaresRemaining() > 0);
             
-            return finalBoard;
+            _board.PrintBoard();
         }
         
-        public List<BoardSquare> CalculatePossibleValues(BoardSquare boardSquare, int value)
+        private List<int> CalculatePossibleValues(BoardSquare boardSquare)
         {
-            var row = boardSquare.GetRowIndex();
-            var column = boardSquare.GetColumnIndex();
-            var subBoard = boardSquare.GetSubBoard();
+            var Row = boardSquare.GetRowIndex();
+            var Column = boardSquare.GetColumnIndex();
+            var SubBoard = boardSquare.GetSubBoard();
             
-            var placedValues = new List<BoardSquare>();
-            placedValues.AddRange(_board.GetRow(row));
-            placedValues.AddRange(_board.GetColumn(column));
-            placedValues.AddRange(_board.GetSubBoard(subBoard));
+            var PlacedValues = new List<BoardSquare>();
+            PlacedValues.AddRange(_board.GetRow(Row));
+            PlacedValues.AddRange(_board.GetColumn(Column));
+            PlacedValues.AddRange(_board.GetSubBoard(SubBoard));
             
-            var possibleValues = new HashSet<BoardSquare>();
-            foreach (var square in placedValues)
+            var PossibleValues = new HashSet<int>(){1,2,3,4,5,6,7,8,9};
+            foreach (var Square in PlacedValues)
             {
-                possibleValues.Add(square);
+                PossibleValues.Remove(Square.GetValue());
             }
-            return possibleValues.ToList();
+            return PossibleValues.ToList();
         }
     }
 }
