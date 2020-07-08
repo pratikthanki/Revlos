@@ -22,5 +22,3 @@
 /Users/PratikThanki/Projects/Revlos/Revlos/obj/Debug/netcoreapp3.1/Revlos.dll
 /Users/PratikThanki/Projects/Revlos/Revlos/obj/Debug/netcoreapp3.1/Revlos.pdb
 /Users/PratikThanki/Projects/Revlos/Revlos/obj/Debug/netcoreapp3.1/Revlos.genruntimeconfig.cache
-/Users/PratikThanki/Projects/Revlos/Revlos/bin/Debug/netcoreapp3.1/DlxLib.dll
-/Users/PratikThanki/Projects/Revlos/Revlos/obj/Debug/netcoreapp3.1/Revlos.csproj.CopyComplete
