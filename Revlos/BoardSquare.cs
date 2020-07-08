@@ -24,7 +24,7 @@ namespace Revlos
 
         public void SetValue(int value)
         {
-            if (_candidates.Count > 0) 
+            if (_candidates.Count > 0)
                 _candidates.Clear();
 
             _value = value;
@@ -32,7 +32,8 @@ namespace Revlos
 
         public void SetValue()
         {
-            SetValue(_candidates.First());
+            if (_candidates.Count == 1)
+                SetValue(_candidates.First());
         }
 
         public void SetLocation(int row, int column)
