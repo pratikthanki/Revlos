@@ -1,19 +1,22 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace Revlos
 {
     public class Board
     {
-        private BoardSquare[,] _board;
-        public const int Size = 9;
+        private readonly BoardSquare[,] _board;
+        private HashSet<BoardSquare> _solved;
+        private HashSet<BoardSquare> _unsolved;
+        private Stack<HashSet<BoardSquare>> _changed;
+        
         public Board(IReadOnlyList<string> rows)
         {
-            _board = new BoardSquare[9, 9];
-            _board = BuildBoard(rows);
+            _board = BuildBoard(rows); 
+            _solved = new HashSet<BoardSquare>();
+            _unsolved = new HashSet<BoardSquare>();
+            _changed = new Stack<HashSet<BoardSquare>>();
         }
         
         private static BoardSquare[,] BuildBoard(IReadOnlyList<string> rows)
@@ -24,17 +27,16 @@ namespace Revlos
                 var row = rows[i];
                 for (var j = 0; j < row.Length; j++)
                 {
-                    if (row[j] == '-')
-                    {
-                        board[i,j] = new BoardSquare();
-                    }
-                    else
-                    {
-                        board[i,j] = new BoardSquare((int)char.GetNumericValue(row[j]));
-                    }
+                    board[i,j] = row[j] == '-' ? new BoardSquare(0) : new BoardSquare((int)char.GetNumericValue(row[j]));
+                    board[i,j].SetLocation(i, j);
                 }
             }
             return board;
+        }
+
+        public BoardSquare GetBoardSquare(int row, int column)
+        {
+            return _board[row, column];
         }
         
         public void PrintBoard()
@@ -52,16 +54,16 @@ namespace Revlos
                     {
                         Console.Write(" |");
                     }
-                    Console.Write(" " + _board[i, j].ToString());
+                    Console.Write(" " + _board[i, j]);
                 }
 
                 Console.WriteLine();
             }
         }
 
-        public BoardSquare[] GetRow(int row)
+        public List<BoardSquare> GetRow(int row)
         {
-            BoardSquare[] result = new BoardSquare[9];
+            var result = new List<BoardSquare>(9);
             for (var i = 0; i < _board.GetLength(0);i++)
             {
                 if (i != row)
@@ -69,15 +71,15 @@ namespace Revlos
 
                 for (var j = 0; j < _board.GetLength(1); j++)
                 {
-                    result[j] = _board[i,j];
+                    result.Add(_board[i,j]);
                 }
             }
             return result;
         }
         
-        public BoardSquare[] GetColumn(int column)
+        public List<BoardSquare> GetColumn(int column)
         {
-            BoardSquare[] result = new BoardSquare[9];
+            var result = new List<BoardSquare>(9);
             for (var i = 0; i < _board.GetLength(0);i++)
             {
                 for (var j = 0; j < _board.GetLength(1); j++)
@@ -85,23 +87,31 @@ namespace Revlos
                     if (j != column)
                         continue;
 
-                    result[i] = _board[i,j];
+                    result.Add(_board[i,j]);
                 }
             }
             return result;
         }
-    }
-    
-    internal enum SubBoards
-    {
-        UpperLeft,
-        UpperMiddle,
-        UpperRight,
-        MiddleLeft,
-        Middle,
-        MiddleRight,
-        LowerLeft,
-        LowerMiddle,
-        LowerRight
+        
+        public List<BoardSquare> GetSubBoard(SubBoard subBoard)
+        {
+            var subBoardSquares = new List<BoardSquare>(9);
+            for (var i = 0; i < _board.GetLength(0);i++)
+            {
+                for (var j = 0; j < _board.GetLength(1); j++)
+                {
+                    if (_board[i, j].GetSubBoard() == subBoard)
+                    {
+                        subBoardSquares.Add(_board[i, j]);
+                    }
+                }
+            }
+            return subBoardSquares;
+        }
+        
+        public int SquaresRemaining()
+        {
+            return _board.Cast<BoardSquare>().Count(square => square.IsEmpty());
+        }
     }
 }
