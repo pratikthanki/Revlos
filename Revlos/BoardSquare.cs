@@ -6,7 +6,7 @@ namespace Revlos
 {
     public class BoardSquare
     {
-        private readonly HashSet<int> _possibleValues = new HashSet<int>(9);
+        private readonly HashSet<int> _candidates = new HashSet<int>(9);
         private int _value;
         private int _column;
         private int _row;
@@ -24,15 +24,15 @@ namespace Revlos
 
         public void SetValue(int value)
         {
-            if (_possibleValues.Count > 0) 
-                _possibleValues.Clear();
+            if (_candidates.Count > 0) 
+                _candidates.Clear();
 
             _value = value;
         }
 
         public void SetValue()
         {
-            SetValue(_possibleValues.First());
+            SetValue(_candidates.First());
         }
 
         public void SetLocation(int row, int column)
@@ -42,28 +42,28 @@ namespace Revlos
             _subBoard = GetSubBoard(column, row);
         }
 
-        public void AddPossibleValue(int value)
+        public void AddCandidates(int value)
         {
-            _possibleValues.Add(value);
+            _candidates.Add(value);
         }
 
-        public void AddPossibleValue(List<int> values)
+        public void AddCandidates(List<int> values)
         {
             foreach (var value in values)
-                AddPossibleValue(value);
+                AddCandidates(value);
         }
         
-        public void RemovePossibleValue(int value)
+        public void RemoveCandidates(int value)
         {
-            if (_possibleValues.Count > 0)
+            if (_candidates.Count > 0)
             {
-                _possibleValues.Remove(value);
+                _candidates.Remove(value);
             }
         }
 
-        public HashSet<int> GetPossibleValues()
+        public HashSet<int> GetCandidates()
         {
-            return _possibleValues;
+            return _candidates;
         }
 
         public int GetValue()
