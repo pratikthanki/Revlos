@@ -54,7 +54,7 @@ namespace Revlos
                     {
                         Console.Write(" |");
                     }
-                    Console.Write(" " + _board[i, j].ToString());
+                    Console.Write(" " + _board[i, j]);
                 }
 
                 Console.WriteLine();
