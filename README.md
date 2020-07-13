@@ -13,10 +13,15 @@ by ‘at least once’ or ‘at most once’, anywhere in this definition.
 
 Though there are more original problems to solve, I wanted to implement my own Sudoku Solver.
 
-This is written in C# by looking at the problem as an [exact cover](https://en.wikipedia.org/wiki/Exact_cover) 
-problem and implementing Donald E. Knuth's Algorithm X using the Dancing Links technique as described 
+This is written in C# by considering it as an [exact cover](https://en.wikipedia.org/wiki/Exact_cover) 
+problem I chose to implement this using Donald E. Knuth's Algorithm X and the Dancing Links technique as described 
 in his [paper](https://arxiv.org/abs/cs/0011047).
+
+[VOLUME 4 PRE-FASCICLE 5C](https://www.inf.ufrgs.br/~mrpritt/lib/exe/fetch.php?media=inf5504:7.2.2.1-dancing_links.pdf) of the 
+_The Art of Computer Programming_ series looks at Dancing Links in more detail. In my opinion, `Volume 1: Fundamental Algorithms` is a 
+book every devloper should read.
 
 He presented a great talk at the Stanford Annual Christmas [Lecture](https://www.youtube.com/watch?v=_cR9zDlvP88) 
 where he descibed the algorithm.
 
+You can find more details about the books [here](https://www-cs-faculty.stanford.edu/~knuth/taocp.html).
