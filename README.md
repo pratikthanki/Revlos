@@ -25,3 +25,7 @@ He presented a great talk at the Stanford Annual Christmas [Lecture](https://www
 where he descibed the algorithm.
 
 You can find more details about the books [here](https://www-cs-faculty.stanford.edu/~knuth/taocp.html).
+
+TODO:
+- [ ] use [ml.net](https://github.com/dotnet/machinelearning) to capture puzzle and create `Board`
+- [ ] solve puzzle from the image
