@@ -13,22 +13,22 @@ namespace Revlos
 
         private static void TestSolution()
         {
-            var rows = new List<string>(new string[]
-            {
-                "------3--",
-                "1--4-----",
-                "------1-5",
-                "9--------",
-                "-----26--",
-                "----53---",
-                "-5-8-----",
-                "---9---7-",
-                "-83----4-"
-            });
-            Debug.Assert(rows.Count == 9);
+            // Choose puzzle from test data
+            var puzzle = TestPuzzles.easy;
 
-            var solver = new Solver(new Board(rows));
-            solver.DancingLink();
+            var stopwatch = new Stopwatch();
+            var board = new Board(puzzle);
+            var solver = new Solver(board);
+
+            stopwatch.Start();
+
+            // work in progress!
+            // solver.DancingLink();
+            solver.Backtrack();
+
+            stopwatch.Stop();
+
+            Console.WriteLine($"Time taken: {stopwatch.Elapsed.Milliseconds} ms");
         }
     }
 }

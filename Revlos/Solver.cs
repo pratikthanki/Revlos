@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,19 +6,15 @@ namespace Revlos
     public class Solver
     {
         private Board _board;
-        private readonly HashSet<int> Candidates = new HashSet<int>() {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
         public Solver(Board board)
         {
             _board = board;
+            InitializeCandidates();
         }
 
         public void DancingLink()
         {
-            var squaresRemaining = _board.SquaresRemaining();
-            InitializeCandidates();
-            _board.PrintBoard();
-
             do
             {
                 for (var row = 0; row < 9; row++)
@@ -27,6 +22,7 @@ namespace Revlos
                     for (var column = 0; column < 9; column++)
                     {
                         var currentSquare = _board.GetBoardSquare(row, column);
+                        if (!currentSquare.IsEmpty()) continue;
 
                         if (currentSquare.GetCandidates().Count == 1)
                         {
@@ -34,23 +30,47 @@ namespace Revlos
                             continue;
                         }
 
-                        if (!currentSquare.IsEmpty()) continue;
+                        var rowSubset = _board.GetRow(currentSquare.GetRowIndex());
+                        if (FindSinglesInSubset(currentSquare, rowSubset)) continue;
 
-                        FindSinglesInSubset(currentSquare, _board.GetRow(currentSquare.GetRowIndex()));
-                        FindSinglesInSubset(currentSquare, _board.GetColumn(currentSquare.GetColumnIndex()));
-                        FindSinglesInSubset(currentSquare, _board.GetSubBoard(currentSquare.GetSubBoard()));
+                        var columnSubset = _board.GetColumn(currentSquare.GetColumnIndex());
+                        if (FindSinglesInSubset(currentSquare, columnSubset)) continue;
+
+                        var subBoardSubset = _board.GetSubBoard(currentSquare.GetSubBoard());
+                        if (FindSinglesInSubset(currentSquare, subBoardSubset)) continue;
                     }
                 }
-
-                if (squaresRemaining == _board.SquaresRemaining()) continue;
-
-                squaresRemaining = _board.SquaresRemaining();
-                Console.WriteLine($"Squares remaining: {_board.SquaresRemaining()}");
-                _board.PrintBoard();
-
-            } while (_board.SquaresRemaining() > 0);
+            } while (!_board.IsSolved());
 
             _board.PrintBoard();
+        }
+
+        public bool Backtrack()
+        {
+            for (var row = 0; row < 9; row++)
+            {
+                for (var column = 0; column < 9; column++)
+                {
+                    var currentSquare = _board.GetBoardSquare(row, column);
+                    if (!currentSquare.IsEmpty()) continue;
+
+                    for (var number = 1; number <= 9; number++)
+                    {
+                        var placedValues = GetNeighbours(currentSquare);
+
+                        if (!IsValidMove(placedValues, number)) continue;
+                        currentSquare.SetValue(number);
+
+                        if (Backtrack()) return true;
+                        currentSquare.SetValue(0);
+                    }
+
+                    return false;
+                }
+            }
+
+            _board.PrintBoard();
+            return true;
         }
 
         private void InitializeCandidates()
@@ -71,19 +91,16 @@ namespace Revlos
 
         private void PopulateCandidates(BoardSquare currentSquare)
         {
-            var Neighbours = GetNeighbours(currentSquare);
+            var candidates = new HashSet<int>() {1, 2, 3, 4, 5, 6, 7, 8, 9};
+            foreach (var square in GetNeighbours(currentSquare))
+                candidates.Remove(square.GetValue());
 
-            foreach (var Square in Neighbours)
-            {
-                Candidates.Remove(Square.GetValue());
-            }
-
-            currentSquare.AddCandidates(Candidates.ToList());
+            currentSquare.AddCandidates(candidates.ToList());
         }
 
-        private void FindSinglesInSubset(BoardSquare currentSquare, List<BoardSquare> squareSubset)
+        private bool FindSinglesInSubset(BoardSquare currentSquare, IEnumerable<BoardSquare> squareSubset)
         {
-            if (!currentSquare.IsEmpty()) return;
+            if (!currentSquare.IsEmpty()) return false;
 
             var candidateCounter = currentSquare.GetCandidates()
                 .ToDictionary(Candidate => Candidate, Candidate => 0);
@@ -92,20 +109,23 @@ namespace Revlos
             {
                 foreach (var candidate in square.GetCandidates())
                 {
-                    if (candidateCounter.ContainsKey(candidate))
-                    {
-                        candidateCounter[candidate]++;
-                    }
+                    if (candidateCounter.ContainsKey(candidate)) candidateCounter[candidate]++;
                 }
             }
 
             foreach (var candidate in candidateCounter)
             {
-                if (candidate.Value != 1 && !(candidate.Value == 2 & candidateCounter.Count == 2)) continue;
-                currentSquare.SetValue(candidate.Key);
-                RemoveCandidateFromNeighbours(currentSquare, candidate.Key);
-                return;
+                // If a possible candidate has a count of 1 OR;
+                // a count of 2 and there are only two candidates to choose from then set value
+                if (candidate.Value == 1 || candidate.Value == 2 & candidateCounter.Count == 2)
+                {
+                    currentSquare.SetValue(candidate.Key);
+                    RemoveCandidateFromNeighbours(currentSquare, candidate.Key);
+                    return true;
+                }
             }
+
+            return false;
         }
 
         private void RemoveCandidateFromNeighbours(BoardSquare currentSquare, int value)
@@ -128,6 +148,11 @@ namespace Revlos
             PlacedValues.AddRange(_board.GetColumn(Column));
             PlacedValues.AddRange(_board.GetSubBoard(SubBoard));
             return PlacedValues;
+        }
+
+        private static bool IsValidMove(IEnumerable<BoardSquare> placedValues, int number)
+        {
+            return placedValues.All(value => !value.GetValue().Equals(number));
         }
     }
 }
