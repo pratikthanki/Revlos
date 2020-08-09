@@ -11,11 +11,11 @@ namespace Revlos
             TestSolution();
         }
 
-        public static void TestSolution()
+        private static void TestSolution()
         {
             var rows = new List<string>(new string[]
             {
-                "------3--", 
+                "------3--",
                 "1--4-----",
                 "------1-5",
                 "9--------",
