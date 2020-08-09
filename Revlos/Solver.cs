@@ -7,7 +7,8 @@ namespace Revlos
     public class Solver
     {
         private Board _board;
-        
+        private readonly HashSet<int> Candidates = new HashSet<int>() {1, 2, 3, 4, 5, 6, 7, 8, 9};
+
         public Solver(Board board)
         {
             _board = board;
@@ -48,6 +49,7 @@ namespace Revlos
                 _board.PrintBoard();
 
             } while (_board.SquaresRemaining() > 0);
+
             _board.PrintBoard();
         }
 
@@ -70,7 +72,6 @@ namespace Revlos
         private void PopulateCandidates(BoardSquare currentSquare)
         {
             var Neighbours = GetNeighbours(currentSquare);
-            var Candidates = new HashSet<int>() {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
             foreach (var Square in Neighbours)
             {
@@ -79,7 +80,7 @@ namespace Revlos
 
             currentSquare.AddCandidates(Candidates.ToList());
         }
-        
+
         private void FindSinglesInSubset(BoardSquare currentSquare, List<BoardSquare> squareSubset)
         {
             if (!currentSquare.IsEmpty()) return;
@@ -100,12 +101,10 @@ namespace Revlos
 
             foreach (var candidate in candidateCounter)
             {
-                if (candidate.Value == 1 || candidate.Value == 2 & candidateCounter.Count == 2)
-                {
-                    currentSquare.SetValue(candidate.Key);
-                    RemoveCandidateFromNeighbours(currentSquare, candidate.Key);
-                    return;
-                }
+                if (candidate.Value != 1 && !(candidate.Value == 2 & candidateCounter.Count == 2)) continue;
+                currentSquare.SetValue(candidate.Key);
+                RemoveCandidateFromNeighbours(currentSquare, candidate.Key);
+                return;
             }
         }
 
@@ -117,8 +116,8 @@ namespace Revlos
                     square.GetCandidates().Remove(value);
             }
         }
-        
-        private List<BoardSquare> GetNeighbours(BoardSquare currentSquare)
+
+        private IEnumerable<BoardSquare> GetNeighbours(BoardSquare currentSquare)
         {
             var Row = currentSquare.GetRowIndex();
             var Column = currentSquare.GetColumnIndex();

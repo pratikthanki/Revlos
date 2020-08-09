@@ -16,7 +16,7 @@ namespace Revlos
         {
             _value = value;
         }
-        
+
         public bool IsEmpty()
         {
             return _value == 0;
@@ -48,12 +48,12 @@ namespace Revlos
             _candidates.Add(value);
         }
 
-        public void AddCandidates(List<int> values)
+        public void AddCandidates(IEnumerable<int> values)
         {
             foreach (var value in values)
                 AddCandidates(value);
         }
-        
+
         public void RemoveCandidates(int value)
         {
             if (_candidates.Count > 0)
@@ -86,7 +86,7 @@ namespace Revlos
         {
             return _subBoard;
         }
-        
+
         private static SubBoard GetSubBoard(int x, int y)
         {
             if (x < 0 || x > 8 || y < 0 || y > 8)
@@ -118,7 +118,7 @@ namespace Revlos
 
             return SubBoard.BottomRight;
         }
-        
+
         public override string ToString()
         {
             return _value == 0 ? " " : _value.ToString();
