@@ -27,7 +27,7 @@ namespace Revlos
 
                 for (var j = 0; j < row.Length; j++)
                 {
-                    board[i, j] = row[j] == '-'
+                    board[i, j] = int.Parse(row[j].ToString()) == 0
                         ? new BoardSquare(0)
                         : new BoardSquare((int) char.GetNumericValue(row[j]));
                     board[i, j].SetLocation(i, j);
