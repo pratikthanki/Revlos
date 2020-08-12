@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Revlos
@@ -13,22 +12,20 @@ namespace Revlos
 
         private static void TestSolution()
         {
-            // Choose puzzle from test data
-            var puzzle = TestPuzzles.easy;
-
+            var board = new Board(TestPuzzles.easy);
             var stopwatch = new Stopwatch();
-            var board = new Board(puzzle);
-            var solver = new Solver(board);
 
+            var backtrack = new Backtrack(board);
             stopwatch.Start();
-
-            // work in progress!
-            // solver.DancingLink();
-            solver.Backtrack();
-
+            backtrack.Solve();
             stopwatch.Stop();
+            Console.WriteLine($"Backtrack time: {stopwatch.Elapsed.Milliseconds} ms");
 
-            Console.WriteLine($"Time taken: {stopwatch.Elapsed.Milliseconds} ms");
+            var dancingLinks = new DancingLinks(board);
+            stopwatch.Restart();
+            dancingLinks.Solve();
+            stopwatch.Stop();
+            Console.WriteLine($"Dancing links time: {stopwatch.Elapsed.Milliseconds} ms");
         }
     }
 }
