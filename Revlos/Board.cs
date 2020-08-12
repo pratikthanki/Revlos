@@ -5,13 +5,25 @@ using System.Linq;
 
 namespace Revlos
 {
+    
     public class Board
     {
         private readonly BoardSquare[,] _board;
+        public Candidate[,] cellConstraint;
+        public Candidate[] rowConstraint;
+        public Candidate[] columnConstraint;
+        public Candidate[,] subBoardConstraint;
 
         public Board(IReadOnlyList<string> rows)
         {
             _board = BuildBoard(rows);
+
+            cellConstraint = new Candidate[9, 9];
+            rowConstraint = new Candidate[9];
+            columnConstraint = new Candidate[9];
+            subBoardConstraint = new Candidate[9, 9];
+            
+            InitialiseConstraints();
             PrintBoard();
         }
 
@@ -113,6 +125,38 @@ namespace Revlos
         private int SquaresRemaining()
         {
             return _board.Cast<BoardSquare>().Count(square => square.IsEmpty());
+        }
+        
+        private void InitialiseConstraints()
+        {
+            for (var row = 0; row < 9; row++)
+            for (var col = 0; col < 9; col++)
+                cellConstraint[row, col] = new Candidate(9, true);
+
+            for (var row = 0; row < 3; row++)
+            for (var col = 0; col < 3; col++)
+                subBoardConstraint[row, col] = new Candidate(9, false);
+
+
+            for (var i = 0; i < 9; i++)
+            {
+                rowConstraint[i] = new Candidate(9, false);
+                columnConstraint[i] = new Candidate(9, false);
+            }
+
+            for (var row = 0; row < 9; row++)
+            {
+                for (var col = 0; col < 9; col++)
+                {
+                    if (_board[row, col].GetValue() <= 0)
+                        continue;
+
+                    var candidate = _board[row, col].GetValue();
+                    rowConstraint[row][candidate] = true;
+                    columnConstraint[col][candidate] = true;
+                    subBoardConstraint[row / 3, col / 3][candidate] = true;
+                }
+            }
         }
     }
 }
