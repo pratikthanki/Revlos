@@ -11,10 +11,19 @@ namespace Revlos
         private int _column;
         private int _row;
         private SubBoard _subBoard;
+        
+        public int row;
+        public int col;
 
         public BoardSquare(int value)
         {
             _value = value;
+        }
+        
+        public BoardSquare(int r, int c)
+        {
+            row = r;
+            col = c;
         }
 
         public bool IsEmpty()
