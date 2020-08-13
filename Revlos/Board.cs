@@ -24,7 +24,6 @@ namespace Revlos
             subBoardConstraint = new Candidate[9, 9];
             
             InitialiseConstraints();
-            PrintBoard();
         }
 
         private static BoardSquare[,] BuildBoard(IReadOnlyList<string> rows)
@@ -42,6 +41,7 @@ namespace Revlos
                     board[i, j] = int.Parse(row[j].ToString()) == 0
                         ? new BoardSquare(0)
                         : new BoardSquare((int) char.GetNumericValue(row[j]));
+
                     board[i, j].SetLocation(i, j);
                 }
             }
@@ -58,11 +58,13 @@ namespace Revlos
         {
             for (var i = 0; i < _board.GetLength(0); i++)
             {
-                if (i % 3 == 0 && i > 0) Console.WriteLine(" - - - + - - - + - - - ");
+                if (i % 3 == 0 && i > 0) 
+                    Console.WriteLine(" - - - + - - - + - - - ");
 
                 for (var j = 0; j < _board.GetLength(1); j++)
                 {
-                    if (j % 3 == 0 && j > 0) Console.Write(" |");
+                    if (j % 3 == 0 && j > 0) 
+                        Console.Write(" |");
 
                     Console.Write(" " + _board[i, j]);
                 }
@@ -73,30 +75,37 @@ namespace Revlos
             Console.WriteLine();
         }
 
-        public IEnumerable<BoardSquare> GetRow(int row)
+        public IEnumerable<BoardSquare> GetRow(int rowIndex)
         {
             var result = new List<BoardSquare>(9);
-            for (var i = 0; i < _board.GetLength(0); i++)
+            for (var row = 0; row < _board.GetLength(0); row++)
             {
-                if (i != row) continue;
+                if (row != rowIndex)
+                    continue;
 
-                for (var j = 0; j < _board.GetLength(1); j++) result.Add(_board[i, j]);
+                for (var col = 0; col < _board.GetLength(1); col++)
+                {
+                    if (!_board[row, col].IsEmpty())
+                        result.Add(_board[row, col]);
+                }
 
             }
 
             return result;
         }
 
-        public IEnumerable<BoardSquare> GetColumn(int column)
+        public IEnumerable<BoardSquare> GetColumn(int colIndex)
         {
             var result = new List<BoardSquare>(9);
-            for (var i = 0; i < _board.GetLength(0); i++)
+            for (var row = 0; row < _board.GetLength(0); row++)
             {
-                for (var j = 0; j < _board.GetLength(1); j++)
+                for (var col = 0; col < _board.GetLength(1); col++)
                 {
-                    if (j != column) continue;
+                    if (col != colIndex)
+                        continue;
 
-                    result.Add(_board[i, j]);
+                    if (!_board[row, col].IsEmpty())
+                        result.Add(_board[row, col]);
                 }
             }
 
@@ -105,16 +114,20 @@ namespace Revlos
 
         public IEnumerable<BoardSquare> GetSubBoard(SubBoard subBoard)
         {
-            var subBoardSquares = new List<BoardSquare>(9);
-            for (var i = 0; i < _board.GetLength(0); i++)
+            var result = new List<BoardSquare>(9);
+            for (var row = 0; row < _board.GetLength(0); row++)
             {
-                for (var j = 0; j < _board.GetLength(1); j++)
+                for (var col = 0; col < _board.GetLength(1); col++)
                 {
-                    if (_board[i, j].GetSubBoard() == subBoard) subBoardSquares.Add(_board[i, j]);
+                    if (_board[row, col].GetSubBoard() != subBoard)
+                        continue;
+
+                    if (!_board[row, col].IsEmpty())
+                        result.Add(_board[row, col]);
                 }
             }
 
-            return subBoardSquares;
+            return result;
         }
 
         public bool IsSolved()

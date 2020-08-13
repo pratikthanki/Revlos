@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Revlos
@@ -6,10 +8,17 @@ namespace Revlos
     public class Backtrack
     {
         private readonly Board _board;
+        private int steps;
+        private Stopwatch _stopwatch;
 
         public Backtrack(Board board)
         {
             _board = board;
+            steps = 0;
+            _stopwatch = new Stopwatch();
+            
+            _board.PrintBoard();
+            _stopwatch.Start();
         }
 
         public bool Solve()
@@ -30,6 +39,7 @@ namespace Revlos
                             continue;
 
                         currentSquare.SetValue(number);
+                        steps++;
 
                         if (Solve())
                             return true;
@@ -40,8 +50,9 @@ namespace Revlos
                     return false;
                 }
             }
-
+            _stopwatch.Stop();
             _board.PrintBoard();
+            Console.WriteLine($"Steps: {steps}; Time taken: {_stopwatch.ElapsedMilliseconds}ms");
             return true;
         }
 
