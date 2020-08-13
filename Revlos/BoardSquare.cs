@@ -8,10 +8,7 @@ namespace Revlos
     {
         private readonly HashSet<int> _candidates = new HashSet<int>(9);
         private int _value;
-        private int _column;
-        private int _row;
         private SubBoard _subBoard;
-        
         public int row;
         public int col;
 
@@ -19,11 +16,12 @@ namespace Revlos
         {
             _value = value;
         }
-        
+
         public BoardSquare(int r, int c)
         {
             row = r;
             col = c;
+            SetLocation(r, c);
         }
 
         public bool IsEmpty()
@@ -45,11 +43,11 @@ namespace Revlos
                 SetValue(_candidates.First());
         }
 
-        public void SetLocation(int row, int column)
+        public void SetLocation(int rowIndex, int colIndex)
         {
-            _row = row;
-            _column = column;
-            _subBoard = GetSubBoard(column, row);
+            this.row = rowIndex;
+            this.col = colIndex;
+            _subBoard = GetSubBoard(colIndex, rowIndex);
         }
 
         public void AddCandidates(int value)
@@ -83,12 +81,12 @@ namespace Revlos
 
         public int GetRowIndex()
         {
-            return _row;
+            return row;
         }
 
         public int GetColumnIndex()
         {
-            return _column;
+            return col;
         }
 
         public SubBoard GetSubBoard()
@@ -132,5 +130,18 @@ namespace Revlos
         {
             return _value == 0 ? " " : _value.ToString();
         }
+    }
+
+    public enum SubBoard
+    {
+        TopLeft,
+        TopMiddle,
+        TopRight,
+        MiddleLeft,
+        Middle,
+        MiddleRight,
+        BottomLeft,
+        BottomMiddle,
+        BottomRight
     }
 }
