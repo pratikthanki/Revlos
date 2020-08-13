@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Revlos
 {
@@ -7,25 +8,13 @@ namespace Revlos
     {
         static void Main(string[] args)
         {
-            TestSolution();
-        }
+            foreach (var puzzle in TestPuzzles.puzzles.Take(1))
+            {
+                new Backtrack(new Board(puzzle)).Solve();
 
-        private static void TestSolution()
-        {
-            var board = new Board(TestPuzzles.easy);
-            var stopwatch = new Stopwatch();
-
-            var backtrack = new Backtrack(board);
-            stopwatch.Start();
-            backtrack.Solve();
-            stopwatch.Stop();
-            Console.WriteLine($"Backtrack time: {stopwatch.Elapsed.Milliseconds} ms");
-
-            var dancingLinks = new DancingLinks(board);
-            stopwatch.Restart();
-            dancingLinks.Solve();
-            stopwatch.Stop();
-            Console.WriteLine($"Dancing links time: {stopwatch.Elapsed.Milliseconds} ms");
+                // in progress!
+                new DancingLinks(new Board(puzzle)).Solve();
+            }
         }
     }
 }
