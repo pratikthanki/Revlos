@@ -1,98 +1,37 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Revlos
 {
     public class BoardSquare
     {
-        private readonly HashSet<int> _candidates = new HashSet<int>(9);
         private int _value;
         private SubBoard _subBoard;
-        public int row;
-        public int col;
+        private int row;
+        private int col;
 
         public BoardSquare(int value)
         {
             _value = value;
         }
 
-        public BoardSquare(int r, int c)
-        {
-            row = r;
-            col = c;
-            SetLocation(r, c);
-        }
+        public int GetValue() => _value;
 
-        public bool IsEmpty()
-        {
-            return _value == 0;
-        }
+        public int GetRowIndex() => row;
 
-        public void SetValue(int value)
-        {
-            if (_candidates.Count > 0)
-                _candidates.Clear();
+        public int GetColumnIndex() => col;
 
-            _value = value;
-        }
+        public SubBoard GetSubBoard() => _subBoard;
 
-        public void SetValue()
-        {
-            if (_candidates.Count == 1)
-                SetValue(_candidates.First());
-        }
+        public void SetValue(int value) => _value = value;
 
         public void SetLocation(int rowIndex, int colIndex)
         {
-            this.row = rowIndex;
-            this.col = colIndex;
+            row = rowIndex;
+            col = colIndex;
             _subBoard = GetSubBoard(colIndex, rowIndex);
         }
 
-        public void AddCandidates(int value)
-        {
-            _candidates.Add(value);
-        }
-
-        public void AddCandidates(IEnumerable<int> values)
-        {
-            foreach (var value in values)
-                AddCandidates(value);
-        }
-
-        public void RemoveCandidates(int value)
-        {
-            if (_candidates.Count > 0)
-            {
-                _candidates.Remove(value);
-            }
-        }
-
-        public HashSet<int> GetCandidates()
-        {
-            return _candidates;
-        }
-
-        public int GetValue()
-        {
-            return _value;
-        }
-
-        public int GetRowIndex()
-        {
-            return row;
-        }
-
-        public int GetColumnIndex()
-        {
-            return col;
-        }
-
-        public SubBoard GetSubBoard()
-        {
-            return _subBoard;
-        }
+        public bool IsEmpty() => _value == 0;
 
         private static SubBoard GetSubBoard(int x, int y)
         {
@@ -126,10 +65,7 @@ namespace Revlos
             return SubBoard.BottomRight;
         }
 
-        public override string ToString()
-        {
-            return _value == 0 ? " " : _value.ToString();
-        }
+        public override string ToString() => _value == 0 ? " " : _value.ToString();
     }
 
     public enum SubBoard
