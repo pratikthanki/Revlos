@@ -4,181 +4,190 @@ using System.Linq;
 
 namespace Revlos
 {
-    public class DancingLinks
+    class DancingLinks
     {
-        private Board _board;
-        private HashSet<BoardSquare> solvedCells;
-        private HashSet<BoardSquare> unsolvedCells;
-        private Stack<HashSet<BoardSquare>> changedByPropagation;
-        private HashSet<BoardSquare>[] cellsSortedByCandidates;
-        private int steps;
+        private readonly int size;
+        private readonly Board _board;
 
         public DancingLinks(Board board)
         {
             _board = board;
-            solvedCells = new HashSet<BoardSquare>();
-            unsolvedCells = new HashSet<BoardSquare>();
-            changedByPropagation = new Stack<HashSet<BoardSquare>>();
-            cellsSortedByCandidates = new HashSet<BoardSquare>[10];
-            steps = 0;
-
-            for (var i = 0; i < cellsSortedByCandidates.Length; i++)
-            {
-                cellsSortedByCandidates[i] = new HashSet<BoardSquare>();
-            }
-
-            PopulateCandidates();
+            size = board.GetSize();
         }
 
-        private void PopulateCandidates()
+        public void Solve()
         {
-            for (var row = 0; row < 9; row++)
-            {
-                for (var col = 0; col < 9; col++)
-                {
-                    var currentSquare = _board.GetBoardSquare(row, col);
-                    if (currentSquare.IsEmpty())
-                    {
-                        foreach (var candidate in _board.GetRow(row))
-                            _board.cellConstraint[row, col][candidate.GetValue()] = false;
-                        foreach (var candidate in _board.GetColumn(col))
-                            _board.cellConstraint[row, col][candidate.GetValue()] = false;
-                        foreach (var candidate in _board.GetSubBoard(currentSquare.GetSubBoard()))
-                            _board.cellConstraint[row, col][candidate.GetValue()] = false;
+            var (linkedList, boardSquares) = CalculateMatrix();
+            var column = linkedList.Header;
+            var solutions = new List<Node<bool>>();
 
-                        cellsSortedByCandidates[_board.cellConstraint[row, col].Count].Add(currentSquare);
-                        unsolvedCells.Add(currentSquare);
+            var results = Search(linkedList, column, solutions);
+            foreach (var result in results)
+            {
+                var square = boardSquares[result.Index];
+                _board.SetBoardSquare(square.GetRowIndex(), square.GetColumnIndex(), square.GetValue());
+            }
+
+            _board.PrintBoard();
+        }
+
+        private static List<Node<bool>> Search(
+            DoublyLinkedList<bool> list, ColumnNode<bool> columnNode, List<Node<bool>> solutions)
+        {
+            if (list.Header.Right == list.Header) 
+                return solutions;
+
+            columnNode = GetNextColumn(list);
+            Cover(columnNode);
+
+            Node<bool> rowNode = columnNode;
+
+            while (rowNode.Down != columnNode)
+            {
+                rowNode = rowNode.Down;
+                solutions.Add(rowNode);
+
+                var rightNode = rowNode;
+                while (rightNode.Right != rowNode)
+                {
+                    rightNode = rightNode.Right;
+                    Cover(rightNode);
+                }
+
+                var result = Search(list, columnNode, solutions);
+
+                if (result != null)
+                    return result;
+
+                solutions.Remove(rowNode);
+                columnNode = rowNode.ColumnNode;
+
+                var leftNode = rowNode;
+                while (leftNode.Left != rowNode)
+                {
+                    leftNode = leftNode.Left;
+
+                    Uncover(leftNode);
+                }
+            }
+
+            Uncover(columnNode);
+
+            return null;
+        }
+
+        private static ColumnNode<bool> GetNextColumn(DoublyLinkedList<bool> list)
+        {
+            var node = list.Header;
+            ColumnNode<bool> chosenNode = null;
+
+            while (node.Right != list.Header)
+            {
+                node = (ColumnNode<bool>) node.Right;
+                if (chosenNode == null || node.Size < chosenNode.Size)
+                    chosenNode = node;
+            }
+
+            return chosenNode;
+        }
+
+        private static void Cover(Node<bool> node)
+        {
+            var column = node.ColumnNode;
+            column.RemoveHorizontal();
+
+            Node<bool> verticalNode = column;
+            while (verticalNode.Down != column)
+            {
+                verticalNode = verticalNode.Down;
+
+                var removeNode = verticalNode;
+                while (removeNode.Right != verticalNode)
+                {
+                    removeNode = removeNode.Right;
+                    removeNode.RemoveVertical();
+                }
+            }
+        }
+
+        private static void Uncover(Node<bool> node)
+        {
+            var column = node.ColumnNode;
+            Node<bool> verticalNode = column;
+
+            while (verticalNode.Up != column)
+            {
+                verticalNode = verticalNode.Up;
+
+                var removeNode = verticalNode;
+                while (removeNode.Left != verticalNode)
+                {
+                    removeNode = removeNode.Left;
+                    removeNode.ReplaceVertical();
+                }
+            }
+
+            column.ReplaceHorizontal();
+        }
+
+        private (DoublyLinkedList<bool> linkedList, List<BoardSquare> squares) CalculateMatrix()
+        {
+            var matrix = new List<bool[]>();
+            var squares = new List<BoardSquare>();
+
+            for (var row = 0; row < size; row++)
+            {
+                for (var column = 0; column < size; column++)
+                {
+                    var boardSquare = _board.GetBoardSquare(row, column);
+                    if (boardSquare.IsEmpty())
+                    {
+                        for (var value = 1; value <= size; value++)
+                        {
+                            var square = boardSquare.Clone();
+                            square.SetValue(value);
+                            square.SetLocation(row, column);
+
+                            matrix.Add(new bool[size * size * 4]);
+                            SetMatrixValues(matrix.Last(), square);
+                            squares.Add(square);
+                        }
+
                         continue;
                     }
 
-                    _board.cellConstraint[row, col].SetAll(false);
-                    solvedCells.Add(currentSquare);
+                    matrix.Add(new bool[size * size * 4]);
+                    SetMatrixValues(matrix.Last(), boardSquare);
+                    squares.Add(boardSquare);
                 }
             }
+            
+            var linkedList = new DoublyLinkedList<bool>(size * size * 4);
+            linkedList.ProcessMatrix(matrix);
+
+            return (linkedList, squares);
         }
 
-        private BoardSquare NextCell()
+        private void SetMatrixValues(IList<bool> mRow, BoardSquare boardSquare)
         {
-            if (unsolvedCells.Count == 0)
-                return new BoardSquare(-1, -1);
+            var row = boardSquare.GetRowIndex();
+            var column = boardSquare.GetColumnIndex();
+            var value = boardSquare.GetValue();
 
-            foreach (var cell in cellsSortedByCandidates)
-                if (cell.Count > 0)
-                    return cell.First();
+            var positionConstraint = row * size + column;
+            var rowConstraint = size * size + row * size + (value - 1);
+            var columnConstraint = size * size * 2 + column * size + (value - 1);
+            var regionSize = (int) Math.Sqrt(size);
+            var regionNum =
+                (int) Math.Floor(row / (double) regionSize) * regionSize +
+                (int) Math.Floor(column / (double) regionSize);
 
-            return new BoardSquare(99, 99);
-        }
+            var regionConstraint = size * size * 3 + regionNum * size + (value - 1);
 
-        private bool SolveRecurse(BoardSquare nextCell)
-        {
-            _board.PrintBoard();
-
-            if (nextCell.row == -1)
-                return true;
-
-            foreach (int candidate in _board.cellConstraint[nextCell.row, nextCell.col])
-            {
-                SelectCandidate(nextCell, candidate);
-
-                if (SolveRecurse(NextCell()))
-                    return true;
-
-                ++steps;
-                UnselectCandidate(nextCell, candidate);
-            }
-
-            return false;
-        }
-
-        public bool Solve()
-        {
-            steps = 1;
-            return SolveRecurse(NextCell());
-        }
-
-        private void UnselectCandidate(BoardSquare boardSquare, int candidate)
-        {
-            _board.GetBoardSquare(boardSquare.row, boardSquare.col).SetValue(0);
-
-            _board.cellConstraint[boardSquare.row, boardSquare.col][candidate] = true;
-            cellsSortedByCandidates[_board.cellConstraint[boardSquare.row, boardSquare.col].Count].Add(boardSquare);
-
-            _board.rowConstraint[boardSquare.row][candidate] = false;
-            _board.columnConstraint[boardSquare.col][candidate] = false;
-            _board.subBoardConstraint[boardSquare.row / 3, boardSquare.col / 3][candidate] = false;
-
-            foreach (var c in changedByPropagation.Pop())
-                ShiftSquareDownCandidateList(c.row, c.col, candidate);
-
-            solvedCells.Remove(boardSquare);
-            unsolvedCells.Add(boardSquare);
-        }
-
-        private void SelectCandidate(BoardSquare boardSquare, int candidate)
-        {
-            var changedCells = new HashSet<BoardSquare>();
-
-            // set the candidate and move board square 
-            _board.GetBoardSquare(boardSquare.row, boardSquare.col).SetValue(candidate);
-            cellsSortedByCandidates[_board.cellConstraint[boardSquare.row, boardSquare.col].Count].Remove(boardSquare);
-
-            _board.cellConstraint[boardSquare.row, boardSquare.col][candidate] = false;
-            _board.columnConstraint[boardSquare.col][candidate] = true;
-            _board.rowConstraint[boardSquare.row][candidate] = true;
-            _board.subBoardConstraint[boardSquare.row / 3, boardSquare.col / 3][candidate] = true;
-
-            // remove candidates across unsolvedCells cells in the same
-            for (var index = 0; index < 9; index++)
-            {
-                // only change unsolvedCells cells containing the candidate across rows and columns
-                if (_board.GetBoardSquare(boardSquare.row, index).IsEmpty() &&
-                    _board.cellConstraint[boardSquare.row, index][candidate])
-                {
-                    ShiftSquareDownCandidateList(boardSquare.row, index, candidate);
-                    changedCells.Add(_board.GetBoardSquare(boardSquare.row, index));
-                }
-
-                if (_board.GetBoardSquare(index, boardSquare.col).IsEmpty() &&
-                    _board.cellConstraint[index, boardSquare.col][candidate])
-                {
-                    ShiftSquareDownCandidateList(index, boardSquare.col, candidate);
-                    changedCells.Add(_board.GetBoardSquare(index, boardSquare.col));
-                }
-            }
-
-            // remove candidates across unsolvedCells cells in the subBoard
-            var grid_row_start = boardSquare.row / 3 * 3;
-            var grid_col_start = boardSquare.col / 3 * 3;
-
-            for (var row = grid_row_start; row < grid_row_start + 3; row++)
-            for (var col = grid_col_start; col < grid_col_start + 3; col++)
-                // only change unsolvedCells cells containing the candidate
-                if (_board.GetBoardSquare(row, col).IsEmpty() &&
-                    _board.cellConstraint[row, col][candidate])
-                {
-                    ShiftSquareDownCandidateList(row, col, candidate);
-                    changedCells.Add(new BoardSquare(row, col));
-                }
-
-            unsolvedCells.Remove(boardSquare);
-            solvedCells.Add(boardSquare);
-            changedByPropagation.Push(changedCells);
-        }
-
-        private void ShiftSquareDownCandidateList(int row, int col, int candidate)
-        {
-            if (_board.cellConstraint[row, col].Count == 0)
-                return;
-
-            // shift affected cells down the bucket list
-            cellsSortedByCandidates[_board.cellConstraint[row, col].Count]
-                .Remove(_board.GetBoardSquare(row, col));
-
-            cellsSortedByCandidates[_board.cellConstraint[row, col].Count - 1]
-                .Add(_board.GetBoardSquare(row, col));
-
-            // remove the candidate
-            _board.cellConstraint[row, col][candidate] = false;
+            mRow[positionConstraint] = true;
+            mRow[rowConstraint] = true;
+            mRow[columnConstraint] = true;
+            mRow[regionConstraint] = true;
         }
     }
 }
