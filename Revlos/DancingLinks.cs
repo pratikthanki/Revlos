@@ -19,7 +19,7 @@ namespace Revlos
         {
             var (linkedList, boardSquares) = CalculateMatrix();
             var column = linkedList.Header;
-            var solutions = new List<Node<bool>>();
+            var solutions = new List<LinkNode<bool>>();
 
             var results = Search(linkedList, column, solutions);
             foreach (var result in results)
@@ -31,39 +31,39 @@ namespace Revlos
             _board.PrintBoard();
         }
 
-        private static List<Node<bool>> Search(
-            DoublyLinkedList<bool> list, ColumnNode<bool> columnNode, List<Node<bool>> solutions)
+        private static List<LinkNode<bool>> Search(
+            DoublyLinkedList<bool> list, ColumnLinkNode<bool> columnLinkNode, List<LinkNode<bool>> solutions)
         {
             if (list.Header.Right == list.Header) 
                 return solutions;
 
-            columnNode = GetNextColumn(list);
-            Cover(columnNode);
+            columnLinkNode = GetNextColumn(list);
+            Cover(columnLinkNode);
 
-            Node<bool> rowNode = columnNode;
+            LinkNode<bool> RowLinkNode = columnLinkNode;
 
-            while (rowNode.Down != columnNode)
+            while (RowLinkNode.Down != columnLinkNode)
             {
-                rowNode = rowNode.Down;
-                solutions.Add(rowNode);
+                RowLinkNode = RowLinkNode.Down;
+                solutions.Add(RowLinkNode);
 
-                var rightNode = rowNode;
-                while (rightNode.Right != rowNode)
+                var rightNode = RowLinkNode;
+                while (rightNode.Right != RowLinkNode)
                 {
                     rightNode = rightNode.Right;
                     Cover(rightNode);
                 }
 
-                var result = Search(list, columnNode, solutions);
+                var result = Search(list, columnLinkNode, solutions);
 
                 if (result != null)
                     return result;
 
-                solutions.Remove(rowNode);
-                columnNode = rowNode.ColumnNode;
+                solutions.Remove(RowLinkNode);
+                columnLinkNode = RowLinkNode.ColumnLinkNode;
 
-                var leftNode = rowNode;
-                while (leftNode.Left != rowNode)
+                var leftNode = RowLinkNode;
+                while (leftNode.Left != RowLinkNode)
                 {
                     leftNode = leftNode.Left;
 
@@ -71,38 +71,38 @@ namespace Revlos
                 }
             }
 
-            Uncover(columnNode);
+            Uncover(columnLinkNode);
 
             return null;
         }
 
-        private static ColumnNode<bool> GetNextColumn(DoublyLinkedList<bool> list)
+        private static ColumnLinkNode<bool> GetNextColumn(DoublyLinkedList<bool> list)
         {
             var node = list.Header;
-            ColumnNode<bool> chosenNode = null;
+            ColumnLinkNode<bool> ChosenLinkNode = null;
 
             while (node.Right != list.Header)
             {
-                node = (ColumnNode<bool>) node.Right;
-                if (chosenNode == null || node.Size < chosenNode.Size)
-                    chosenNode = node;
+                node = (ColumnLinkNode<bool>) node.Right;
+                if (ChosenLinkNode == null || node.Size < ChosenLinkNode.Size)
+                    ChosenLinkNode = node;
             }
 
-            return chosenNode;
+            return ChosenLinkNode;
         }
 
-        private static void Cover(Node<bool> node)
+        private static void Cover(LinkNode<bool> linkNode)
         {
-            var column = node.ColumnNode;
+            var column = linkNode.ColumnLinkNode;
             column.RemoveHorizontal();
 
-            Node<bool> verticalNode = column;
-            while (verticalNode.Down != column)
+            LinkNode<bool> VerticalLinkNode = column;
+            while (VerticalLinkNode.Down != column)
             {
-                verticalNode = verticalNode.Down;
+                VerticalLinkNode = VerticalLinkNode.Down;
 
-                var removeNode = verticalNode;
-                while (removeNode.Right != verticalNode)
+                var removeNode = VerticalLinkNode;
+                while (removeNode.Right != VerticalLinkNode)
                 {
                     removeNode = removeNode.Right;
                     removeNode.RemoveVertical();
@@ -110,17 +110,17 @@ namespace Revlos
             }
         }
 
-        private static void Uncover(Node<bool> node)
+        private static void Uncover(LinkNode<bool> linkNode)
         {
-            var column = node.ColumnNode;
-            Node<bool> verticalNode = column;
+            var column = linkNode.ColumnLinkNode;
+            LinkNode<bool> VerticalLinkNode = column;
 
-            while (verticalNode.Up != column)
+            while (VerticalLinkNode.Up != column)
             {
-                verticalNode = verticalNode.Up;
+                VerticalLinkNode = VerticalLinkNode.Up;
 
-                var removeNode = verticalNode;
-                while (removeNode.Left != verticalNode)
+                var removeNode = VerticalLinkNode;
+                while (removeNode.Left != VerticalLinkNode)
                 {
                     removeNode = removeNode.Left;
                     removeNode.ReplaceVertical();
