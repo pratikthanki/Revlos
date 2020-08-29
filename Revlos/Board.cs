@@ -25,7 +25,7 @@ namespace Revlos
 
                 for (var j = 0; j < row.Length; j++)
                 {
-                    board[i, j] = int.Parse(row[j].ToString()) == 0
+                    board[i, j] = row[j] == 0
                         ? new BoardSquare(0)
                         : new BoardSquare((int) char.GetNumericValue(row[j]));
 
@@ -38,26 +38,9 @@ namespace Revlos
 
         public BoardSquare GetBoardSquare(int row, int column) => _board[row, column];
 
-        public void PrintBoard()
-        {
-            for (var i = 0; i < _board.GetLength(0); i++)
-            {
-                if (i % 3 == 0 && i > 0)
-                    Console.WriteLine(" - - - + - - - + - - - ");
+        public void SetBoardSquare(int row, int column, int value) => _board[row, column].SetValue(value);
 
-                for (var j = 0; j < _board.GetLength(1); j++)
-                {
-                    if (j % 3 == 0 && j > 0)
-                        Console.Write(" |");
-
-                    Console.Write(" " + _board[i, j]);
-                }
-
-                Console.WriteLine();
-            }
-
-            Console.WriteLine();
-        }
+        public int GetSize() => _board.GetLength(0);
 
         public IEnumerable<BoardSquare> GetRow(int rowIndex)
         {
@@ -112,6 +95,27 @@ namespace Revlos
             }
 
             return result;
+        }
+
+        public void PrintBoard()
+        {
+            for (var i = 0; i < _board.GetLength(0); i++)
+            {
+                if (i % 3 == 0 && i > 0)
+                    Console.WriteLine(" - - - + - - - + - - - ");
+
+                for (var j = 0; j < _board.GetLength(1); j++)
+                {
+                    if (j % 3 == 0 && j > 0)
+                        Console.Write(" |");
+
+                    Console.Write(" " + _board[i, j]);
+                }
+
+                Console.WriteLine();
+            }
+
+            Console.WriteLine();
         }
     }
 }
