@@ -1,13 +1,13 @@
 namespace Revlos
 {
-    internal class Node<T>
+    internal class LinkNode<T>
     {
-        private ColumnNode<T> columnNode;
-        private Node<T> left, right, up, down;
+        private ColumnLinkNode<T> _columnLinkNode;
+        private LinkNode<T> left, right, up, down;
         private T val;
         private readonly int index;
 
-        public Node(int index)
+        public LinkNode(int index)
         {
             this.index = index;
         }
@@ -17,7 +17,7 @@ namespace Revlos
             Up.Down = Down;
             Down.Up = Up;
 
-            ColumnNode.DecrementSize();
+            ColumnLinkNode.DecrementSize();
         }
 
         public void RemoveHorizontal()
@@ -31,7 +31,7 @@ namespace Revlos
             Up.Down = this;
             Down.Up = this;
 
-            ColumnNode.IncrementSize();
+            ColumnLinkNode.IncrementSize();
         }
 
         public void ReplaceHorizontal()
@@ -40,34 +40,34 @@ namespace Revlos
             Left.Right = this;
         }
 
-        public Node<T> Left
+        public LinkNode<T> Left
         {
             get => left;
             set => left = value;
         }
 
-        public Node<T> Right
+        public LinkNode<T> Right
         {
             get => right;
             set => right = value;
         }
 
-        public Node<T> Up
+        public LinkNode<T> Up
         {
             get => up;
             set => up = value;
         }
 
-        public Node<T> Down
+        public LinkNode<T> Down
         {
             get => down;
             set => down = value;
         }
 
-        public ColumnNode<T> ColumnNode
+        public ColumnLinkNode<T> ColumnLinkNode
         {
-            get => columnNode;
-            set => columnNode = value;
+            get => _columnLinkNode;
+            set => _columnLinkNode = value;
         }
 
         public int Index => index;
@@ -79,7 +79,7 @@ namespace Revlos
         }
     }
 
-    internal class ColumnNode<T> : Node<T>
+    internal class ColumnLinkNode<T> : LinkNode<T>
     {
         private readonly int id;
         
@@ -91,12 +91,12 @@ namespace Revlos
 
         public int Size { get; private set; } = 0;
 
-        public ColumnNode(int id) : base(-1)
+        public ColumnLinkNode(int id) : base(-1)
         {
             this.id = id;
             Up = this;
             Down = this;
-            ColumnNode = this;
+            ColumnLinkNode = this;
         }
     }
 }

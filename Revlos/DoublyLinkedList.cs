@@ -4,13 +4,13 @@ namespace Revlos
 {
     class DoublyLinkedList<T>
     {
-        public ColumnNode<T> Header { get; } = new ColumnNode<T>(-1);
-        private List<ColumnNode<T>> Columns { get; } = new List<ColumnNode<T>>();
+        public ColumnLinkNode<T> Header { get; } = new ColumnLinkNode<T>(-1);
+        private List<ColumnLinkNode<T>> Columns { get; } = new List<ColumnLinkNode<T>>();
 
         public DoublyLinkedList(int noColumns)
         {
             for (var i = 0; i < noColumns; i++) 
-                Columns.Add(new ColumnNode<T>(i));
+                Columns.Add(new ColumnLinkNode<T>(i));
 
             Header.Right = Columns[0];
             Columns[0].Left = Header;
@@ -28,18 +28,18 @@ namespace Revlos
         {
             for (var y = 0; y < matrix.Count; y++)
             {
-                var nodes = new List<KeyValuePair<int, Node<T>>>();
+                var nodes = new List<KeyValuePair<int, LinkNode<T>>>();
                 for (var x = 0; x < Columns.Count; x++)
                 {
                     if (matrix[y][x])
-                        nodes.Add(new KeyValuePair<int, Node<T>>(x, new Node<T>(y)));
+                        nodes.Add(new KeyValuePair<int, LinkNode<T>>(x, new LinkNode<T>(y)));
                 }
 
                 ProcessMatrixRow(nodes);
             }
         }
 
-        private void ProcessMatrixRow(IReadOnlyList<KeyValuePair<int, Node<T>>> nodes)
+        private void ProcessMatrixRow(IReadOnlyList<KeyValuePair<int, LinkNode<T>>> nodes)
         {
             for (var i = 0; i < nodes.Count; i++)
             {
@@ -61,17 +61,17 @@ namespace Revlos
             return val;
         }
 
-        private void AddToColumn(int index, Node<T> node)
+        private void AddToColumn(int index, LinkNode<T> linkNode)
         {
             var lowestNode = Columns[index].Up;
 
-            lowestNode.Down = node;
-            node.Up = lowestNode;
+            lowestNode.Down = linkNode;
+            linkNode.Up = lowestNode;
 
-            Columns[index].Up = node;
+            Columns[index].Up = linkNode;
             
-            node.Down = Columns[index];
-            node.ColumnNode = Columns[index];
+            linkNode.Down = Columns[index];
+            linkNode.ColumnLinkNode = Columns[index];
 
             Columns[index].IncrementSize();
         }
