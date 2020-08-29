@@ -1,17 +1,17 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-
+﻿
 namespace Revlos
 {
     class Program
     {
         static void Main(string[] args)
         {
-            foreach (var puzzle in TestPuzzles.puzzles.Take(1))
+            foreach (var puzzle in TestPuzzles.puzzles)
             {
-                new Backtrack(new Board(puzzle)).Solve();
-                // new DancingLinks(new Board(puzzle)).Solve();
+                var board = new Board(puzzle);
+                board.PrintBoard();
+
+                var dancingLinks = new DancingLinks(board);
+                dancingLinks.Solve();
             }
         }
     }
