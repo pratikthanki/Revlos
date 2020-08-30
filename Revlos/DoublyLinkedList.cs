@@ -4,13 +4,13 @@ namespace Revlos
 {
     class DoublyLinkedList<T>
     {
-        public ColumnLinkNode<T> Header { get; } = new ColumnLinkNode<T>(-1);
-        private List<ColumnLinkNode<T>> Columns { get; } = new List<ColumnLinkNode<T>>();
+        public ColumnNode<T> Header { get; } = new ColumnNode<T>(-1);
+        private List<ColumnNode<T>> Columns { get; } = new List<ColumnNode<T>>();
 
         public DoublyLinkedList(int noColumns)
         {
             for (var i = 0; i < noColumns; i++) 
-                Columns.Add(new ColumnLinkNode<T>(i));
+                Columns.Add(new ColumnNode<T>(i));
 
             Header.Right = Columns[0];
             Columns[0].Left = Header;
@@ -71,7 +71,7 @@ namespace Revlos
             Columns[index].Up = linkNode;
             
             linkNode.Down = Columns[index];
-            linkNode.ColumnLinkNode = Columns[index];
+            linkNode.ColumnNode = Columns[index];
 
             Columns[index].IncrementSize();
         }

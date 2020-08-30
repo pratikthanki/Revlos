@@ -2,7 +2,7 @@ namespace Revlos
 {
     internal class LinkNode<T>
     {
-        private ColumnLinkNode<T> _columnLinkNode;
+        private ColumnNode<T> _columnNode;
         private LinkNode<T> left, right, up, down;
         private T val;
         private readonly int index;
@@ -17,7 +17,7 @@ namespace Revlos
             Up.Down = Down;
             Down.Up = Up;
 
-            ColumnLinkNode.DecrementSize();
+            ColumnNode.DecrementSize();
         }
 
         public void RemoveHorizontal()
@@ -31,7 +31,7 @@ namespace Revlos
             Up.Down = this;
             Down.Up = this;
 
-            ColumnLinkNode.IncrementSize();
+            ColumnNode.IncrementSize();
         }
 
         public void ReplaceHorizontal()
@@ -64,10 +64,10 @@ namespace Revlos
             set => down = value;
         }
 
-        public ColumnLinkNode<T> ColumnLinkNode
+        public ColumnNode<T> ColumnNode
         {
-            get => _columnLinkNode;
-            set => _columnLinkNode = value;
+            get => _columnNode;
+            set => _columnNode = value;
         }
 
         public int Index => index;
@@ -79,7 +79,7 @@ namespace Revlos
         }
     }
 
-    internal class ColumnLinkNode<T> : LinkNode<T>
+    internal class ColumnNode<T> : LinkNode<T>
     {
         private readonly int id;
         
@@ -91,12 +91,12 @@ namespace Revlos
 
         public int Size { get; private set; } = 0;
 
-        public ColumnLinkNode(int id) : base(-1)
+        public ColumnNode(int id) : base(-1)
         {
             this.id = id;
             Up = this;
             Down = this;
-            ColumnLinkNode = this;
+            ColumnNode = this;
         }
     }
 }
