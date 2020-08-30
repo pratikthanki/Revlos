@@ -1,37 +1,38 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Revlos
 {
-    
     public class Board
     {
         private readonly BoardSquare[,] _board;
+        private readonly int initialEmptySquares;
 
-        public Board(IReadOnlyList<string> rows)
+        public Board(string rows)
         {
             _board = BuildBoard(rows);
+            initialEmptySquares = Regex.Matches(rows, "0").Count;
         }
 
-        private static BoardSquare[,] BuildBoard(IReadOnlyList<string> rows)
+        private static BoardSquare[,] BuildBoard(string str)
         {
-            Debug.Assert(rows.Count == 9);
+            Debug.Assert(str.Length == 81);
+
+            const int chunkSize = 9;
+            var boardRows = Enumerable
+                .Range(0, str.Length / chunkSize)
+                .Select(i => str.Substring(i * chunkSize, chunkSize)).ToList();
 
             var board = new BoardSquare[9, 9];
-            for (var i = 0; i < rows.Count; i++)
+            for (var r = 0; r < boardRows.Count; r++)
             {
-                var row = rows[i];
+                var row = boardRows[r];
                 Debug.Assert(row.Length == 9);
 
-                for (var j = 0; j < row.Length; j++)
-                {
-                    board[i, j] = row[j] == 0
-                        ? new BoardSquare(0)
-                        : new BoardSquare((int) char.GetNumericValue(row[j]));
-
-                    board[i, j].SetLocation(i, j);
-                }
+                for (var c = 0; c < row.Length; c++) 
+                    board[r,c] = new BoardSquare(r, c, (int) char.GetNumericValue(row[c]));
             }
 
             return board;
@@ -42,6 +43,8 @@ namespace Revlos
         public void SetBoardSquare(int row, int column, int value) => _board[row, column].SetValue(value);
 
         public int GetSize() => _board.GetLength(0);
+
+        public int CountInitialEmptySquares() => initialEmptySquares;
 
         public void PrintBoard()
         {
@@ -60,8 +63,6 @@ namespace Revlos
 
                 Console.WriteLine();
             }
-
-            Console.WriteLine();
         }
     }
 }

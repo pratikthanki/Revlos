@@ -8,8 +8,6 @@ namespace Revlos
             foreach (var puzzle in TestPuzzles.puzzles)
             {
                 var board = new Board(puzzle);
-                board.PrintBoard();
-
                 var dancingLinks = new DancingLinks(board);
                 dancingLinks.Solve();
             }
