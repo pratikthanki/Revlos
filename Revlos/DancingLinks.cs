@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Revlos
@@ -8,15 +9,22 @@ namespace Revlos
     {
         private readonly int size;
         private readonly Board _board;
+        private const int constraints = 4;
+        private static int listLength;
+        private readonly Stopwatch _stopwatch;
 
         public DancingLinks(Board board)
         {
             _board = board;
             size = board.GetSize();
+            listLength = size * size * constraints;
+            _stopwatch = new Stopwatch();
         }
 
         public void Solve()
         {
+            _stopwatch.Start();
+
             var (linkedList, boardSquares) = CalculateMatrix();
             var column = linkedList.Header;
             var solutions = new List<LinkNode<bool>>();
@@ -27,22 +35,25 @@ namespace Revlos
                 var square = boardSquares[result.Index];
                 _board.SetBoardSquare(square.GetRowIndex(), square.GetColumnIndex(), square.GetValue());
             }
+            
+            _stopwatch.Stop();
 
             _board.PrintBoard();
+            Console.WriteLine($"Time taken: {_stopwatch.ElapsedMilliseconds}ms\n");
         }
 
         private static List<LinkNode<bool>> Search(
-            DoublyLinkedList<bool> list, ColumnLinkNode<bool> columnLinkNode, List<LinkNode<bool>> solutions)
+            DoublyLinkedList<bool> list, ColumnNode<bool> columnNode, List<LinkNode<bool>> solutions)
         {
             if (list.Header.Right == list.Header) 
                 return solutions;
 
-            columnLinkNode = GetNextColumn(list);
-            Cover(columnLinkNode);
+            columnNode = GetNextColumn(list);
+            Cover(columnNode);
 
-            LinkNode<bool> RowLinkNode = columnLinkNode;
+            LinkNode<bool> RowLinkNode = columnNode;
 
-            while (RowLinkNode.Down != columnLinkNode)
+            while (RowLinkNode.Down != columnNode)
             {
                 RowLinkNode = RowLinkNode.Down;
                 solutions.Add(RowLinkNode);
@@ -54,13 +65,13 @@ namespace Revlos
                     Cover(rightNode);
                 }
 
-                var result = Search(list, columnLinkNode, solutions);
+                var result = Search(list, columnNode, solutions);
 
                 if (result != null)
                     return result;
 
                 solutions.Remove(RowLinkNode);
-                columnLinkNode = RowLinkNode.ColumnLinkNode;
+                columnNode = RowLinkNode.ColumnNode;
 
                 var leftNode = RowLinkNode;
                 while (leftNode.Left != RowLinkNode)
@@ -71,29 +82,29 @@ namespace Revlos
                 }
             }
 
-            Uncover(columnLinkNode);
+            Uncover(columnNode);
 
             return null;
         }
 
-        private static ColumnLinkNode<bool> GetNextColumn(DoublyLinkedList<bool> list)
+        private static ColumnNode<bool> GetNextColumn(DoublyLinkedList<bool> list)
         {
             var node = list.Header;
-            ColumnLinkNode<bool> ChosenLinkNode = null;
+            ColumnNode<bool> ChosenNode = null;
 
             while (node.Right != list.Header)
             {
-                node = (ColumnLinkNode<bool>) node.Right;
-                if (ChosenLinkNode == null || node.Size < ChosenLinkNode.Size)
-                    ChosenLinkNode = node;
+                node = (ColumnNode<bool>) node.Right;
+                if (ChosenNode == null || node.Size < ChosenNode.Size)
+                    ChosenNode = node;
             }
 
-            return ChosenLinkNode;
+            return ChosenNode;
         }
 
         private static void Cover(LinkNode<bool> linkNode)
         {
-            var column = linkNode.ColumnLinkNode;
+            var column = linkNode.ColumnNode;
             column.RemoveHorizontal();
 
             LinkNode<bool> VerticalLinkNode = column;
@@ -112,7 +123,7 @@ namespace Revlos
 
         private static void Uncover(LinkNode<bool> linkNode)
         {
-            var column = linkNode.ColumnLinkNode;
+            var column = linkNode.ColumnNode;
             LinkNode<bool> VerticalLinkNode = column;
 
             while (VerticalLinkNode.Up != column)
@@ -144,11 +155,9 @@ namespace Revlos
                     {
                         for (var value = 1; value <= size; value++)
                         {
-                            var square = boardSquare.Clone();
-                            square.SetValue(value);
-                            square.SetLocation(row, column);
+                            var square = new BoardSquare(row, column, value);
 
-                            matrix.Add(new bool[size * size * 4]);
+                            matrix.Add(new bool[listLength]);
                             SetMatrixValues(matrix.Last(), square);
                             squares.Add(square);
                         }
@@ -156,13 +165,13 @@ namespace Revlos
                         continue;
                     }
 
-                    matrix.Add(new bool[size * size * 4]);
+                    matrix.Add(new bool[listLength]);
                     SetMatrixValues(matrix.Last(), boardSquare);
                     squares.Add(boardSquare);
                 }
             }
             
-            var linkedList = new DoublyLinkedList<bool>(size * size * 4);
+            var linkedList = new DoublyLinkedList<bool>(listLength);
             linkedList.ProcessMatrix(matrix);
 
             return (linkedList, squares);
