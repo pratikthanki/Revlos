@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Revlos", "Revlos\Revlos.csproj", "{F198D240-2772-4E92-8CB1-13E802B15D1F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Revlos.Recogniser", "Revlos.Recogniser\Revlos.Recogniser.csproj", "{7B6A1A2C-C475-4F1D-B6A9-6DF82D41DDD4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{F198D240-2772-4E92-8CB1-13E802B15D1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F198D240-2772-4E92-8CB1-13E802B15D1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F198D240-2772-4E92-8CB1-13E802B15D1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B6A1A2C-C475-4F1D-B6A9-6DF82D41DDD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B6A1A2C-C475-4F1D-B6A9-6DF82D41DDD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B6A1A2C-C475-4F1D-B6A9-6DF82D41DDD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B6A1A2C-C475-4F1D-B6A9-6DF82D41DDD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
