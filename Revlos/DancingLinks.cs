@@ -179,18 +179,24 @@ namespace Revlos
         {
             var row = boardSquare.GetRowIndex();
             var column = boardSquare.GetColumnIndex();
-            var value = boardSquare.GetValue();
+            var value = boardSquare.GetValue() - 1;
 
+            int RegionIndex()
+            {
+                var regionSize = (int) Math.Sqrt(size);
+                var regionNum1 =
+                    (int) Math.Floor(row / (double) regionSize) * regionSize +
+                    (int) Math.Floor(column / (double) regionSize);
+                return regionNum1;
+            }
+
+            // In order, sets of 81 indexes 
             var positionConstraint = row * size + column;
-            var rowConstraint = size * size + row * size + (value - 1);
-            var columnConstraint = size * size * 2 + column * size + (value - 1);
-            var regionSize = (int) Math.Sqrt(size);
-            var regionNum =
-                (int) Math.Floor(row / (double) regionSize) * regionSize +
-                (int) Math.Floor(column / (double) regionSize);
+            var rowConstraint = size * size + row * size + value;
+            var columnConstraint = size * size * 2 + column * size + value;
+            var regionConstraint = size * size * 3 + RegionIndex() * size + value;
 
-            var regionConstraint = size * size * 3 + regionNum * size + (value - 1);
-
+            // Initialize matrix where the constraint is satisfied
             mRow[positionConstraint] = true;
             mRow[rowConstraint] = true;
             mRow[columnConstraint] = true;
