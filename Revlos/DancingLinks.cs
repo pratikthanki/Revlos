@@ -13,10 +13,10 @@ namespace Revlos
         private static int listLength;
         private readonly Stopwatch _stopwatch;
 
-        public DancingLinks(Board board)
+        public DancingLinks(string board)
         {
-            _board = board;
-            size = board.GetSize();
+            _board = new Board(board);
+            size = _board.GetSize();
             listLength = size * size * constraints;
             _stopwatch = new Stopwatch();
         }
@@ -26,29 +26,27 @@ namespace Revlos
             _stopwatch.Start();
 
             var (linkedList, boardSquares) = CalculateMatrix();
-            var column = linkedList.Header;
             var solutions = new List<LinkNode<bool>>();
 
-            var results = Search(linkedList, column, solutions);
+            var results = Search(linkedList, solutions);
             foreach (var result in results)
             {
                 var square = boardSquares[result.Index];
                 _board.SetBoardSquare(square.GetRowIndex(), square.GetColumnIndex(), square.GetValue());
             }
-            
+
             _stopwatch.Stop();
 
             _board.PrintBoard();
             Console.WriteLine($"Time taken: {_stopwatch.ElapsedMilliseconds}ms\n");
         }
 
-        private static List<LinkNode<bool>> Search(
-            DoublyLinkedList<bool> list, ColumnNode<bool> columnNode, List<LinkNode<bool>> solutions)
+        private static List<LinkNode<bool>> Search(DoublyLinkedList<bool> list, List<LinkNode<bool>> solutions)
         {
-            if (list.Header.Right == list.Header) 
+            if (list.Header.Right == list.Header)
                 return solutions;
 
-            columnNode = GetNextColumn(list);
+            var columnNode = GetNextColumn(list);
             Cover(columnNode);
 
             LinkNode<bool> RowLinkNode = columnNode;
@@ -65,7 +63,7 @@ namespace Revlos
                     Cover(rightNode);
                 }
 
-                var result = Search(list, columnNode, solutions);
+                var result = Search(list, solutions);
 
                 if (result != null)
                     return result;
@@ -170,7 +168,7 @@ namespace Revlos
                     squares.Add(boardSquare);
                 }
             }
-            
+
             var linkedList = new DoublyLinkedList<bool>(listLength);
             linkedList.ProcessMatrix(matrix);
 

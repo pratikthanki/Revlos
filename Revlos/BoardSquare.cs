@@ -4,8 +4,8 @@ namespace Revlos
     public class BoardSquare
     {
         private int _value;
-        private int _row;
-        private int _column;
+        private readonly int _row;
+        private readonly int _column;
 
         public BoardSquare(int row, int column, int value)
         {
