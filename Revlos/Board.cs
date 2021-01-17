@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -60,5 +61,73 @@ namespace Revlos
                 Console.WriteLine();
             }
         }
+        
+        public IEnumerable<BoardSquare> GetRow(int rowIndex)
+        {
+            var result = new List<BoardSquare>(9);
+            for (var row = 0; row < _board.GetLength(0); row++)
+            {
+                if (row != rowIndex)
+                    continue;
+
+                for (var col = 0; col < _board.GetLength(1); col++)
+                {
+                    if (!_board[row, col].IsEmpty())
+                        result.Add(_board[row, col]);
+                }
+
+            }
+
+            return result;
+        }
+
+        public IEnumerable<BoardSquare> GetColumn(int colIndex)
+        {
+            var result = new List<BoardSquare>(9);
+            for (var row = 0; row < _board.GetLength(0); row++)
+            {
+                for (var col = 0; col < _board.GetLength(1); col++)
+                {
+                    if (col != colIndex)
+                        continue;
+
+                    if (!_board[row, col].IsEmpty())
+                        result.Add(_board[row, col]);
+                }
+            }
+
+            return result;
+        }
+
+        public IEnumerable<BoardSquare> GetSubBoard(SubBoard subBoard)
+        {
+            var result = new List<BoardSquare>(9);
+            for (var row = 0; row < _board.GetLength(0); row++)
+            {
+                for (var col = 0; col < _board.GetLength(1); col++)
+                {
+                    if (_board[row, col].GetSubBoard(col, row) != subBoard)
+                        continue;
+
+                    if (!_board[row, col].IsEmpty())
+                        result.Add(_board[row, col]);
+                }
+            }
+
+            return result;
+        }
+    }
+    
+    public enum SubBoard
+    {
+        TopLeft,
+        TopMiddle,
+        TopRight,
+        MiddleLeft,
+        Middle,
+        MiddleRight,
+        BottomLeft,
+        BottomMiddle,
+        BottomRight
     }
 }
